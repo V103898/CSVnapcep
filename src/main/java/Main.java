@@ -1,11 +1,10 @@
-
 import com.opencsv.bean.CsvToBean;
 import com.opencsv.bean.CsvToBeanBuilder;
 import com.opencsv.bean.ColumnPositionMappingStrategy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-
+import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,7 +15,6 @@ public class Main {
     public static void main(String[] args) {
         String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};
         String fileName = "data.csv";
-
 
         // Парсинг CSV в список сотрудников
         List<Employee> list = parseCSV(columnMapping, fileName);
@@ -36,7 +34,8 @@ public class Main {
         System.out.println("Конвертация завершена успешно");
     }
 
-    public class Employee {
+    // Объявляем класс Employee как статический
+    public static class Employee {
         public long id;
         public String firstName;
         public String lastName;
@@ -54,7 +53,6 @@ public class Main {
             this.country = country;
             this.age = age;
         }
-
     }
 
     private static List<Employee> parseCSV(String[] columnMapping, String fileName) {
@@ -65,6 +63,7 @@ public class Main {
 
             CsvToBean<Employee> csv = new CsvToBeanBuilder<Employee>(reader)
                     .withMappingStrategy(strategy)
+                    .withIgnoreLeadingWhiteSpace(true) // Добавлено
                     .build();
 
             return csv.parse();
@@ -74,15 +73,15 @@ public class Main {
         }
     }
 
-
     private static <T> String listToJson(List<T> list) {
         Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        Type listType = new TypeToken<List<T>>() {}.getType();
+        Type listType = new TypeToken<List<T>>() {
+        }.getType();
         return gson.toJson(list, listType);
     }
 
     private static void writeString(String json, String fileName) {
-        try (FileWriter writer = new FileWriter(fileName)) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) { // Используем BufferedWriter
             writer.write(json);
         } catch (IOException e) {
             e.printStackTrace();
