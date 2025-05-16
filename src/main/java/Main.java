@@ -36,12 +36,16 @@ public class Main {
         System.out.println("Конвертация завершена успешно");
     }
 
-   static class Employee {
+    public class Employee {
         public long id;
         public String firstName;
         public String lastName;
         public String country;
         public int age;
+
+        public Employee() {
+            // Пустой конструктор
+        }
 
         public Employee(long id, String firstName, String lastName, String country, int age) {
             this.id = id;
@@ -50,6 +54,7 @@ public class Main {
             this.country = country;
             this.age = age;
         }
+
     }
 
     private static List<Employee> parseCSV(String[] columnMapping, String fileName) {
